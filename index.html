@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gymnázium Mnichovo Hradiště - Rozvrh</title>
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#2196F3">
+    <meta name="apple-mobile-web-app-title" content="GMH Rozvrh" />
+    <link rel="icon" type="image/png" href="/assets/favicon-96x96.png?v=2" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg?v=2" />
+    <link rel="shortcut icon" href="/assets/favicon.ico?v=2" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png?v=2" />
+    <link rel="manifest" href="/assets/site.webmanifest?v=2" />
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            font-family: -apple-system, system-ui, sans-serif;
+            background: #f4f4f4;
+        }
+
+        header {
+            background: #2196F3;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            font-weight: bold;
+        }
+
+        main {
+            flex: 1;
+            overflow: auto;
+            padding: 10px;
+        }
+
+        #loading {
+            padding: 40px;
+            text-align: center;
+            color: #666;
+            font-style: italic;
+        }
+
+        #status-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #eee;
+            padding: 5px 10px;
+            font-size: 11px;
+            display: flex;
+            justify-content: space-between;
+            border-top: 1px solid #ccc;
+            color: #555;
+        }
+
+        .offline-tag {
+            color: #d32f2f;
+            font-weight: bold;
+        }
+
+        /* Timetable styling overrides */
+        .bk-timetable-main {
+            width: 100% !important;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            background: white;
+        }
+
+        td,
+        th {
+            padding: 4px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <header>Gymnázium Mnichovo Hradiště - Rozvrh</header>
+    <main id="app">
+        <div id="loading">Loading timetable...</div>
+    </main>
+    <div id="status-bar">
+        <span id="sync-info">Connecting...</span>
+        <span id="offline-status"></span>
+    </div>
+
+    <script>
+        const app = document.getElementById('app');
+        const syncInfo = document.getElementById('sync-info');
+        const offlineStatus = document.getElementById('offline-status');
+
+        // URL of your Cloudflare Worker API
+        // If hosted on the same domain/worker, leave as is.
+        // If hosted on Pages, change this to your Worker URL.
+        const API_URL = '/api/timetable';
+
+        async function updateTimetable() {
+            try {
+                const res = await fetch(API_URL);
+                if (!res.ok) throw new Error('Network response was not ok');
+                const data = await res.json();
+
+                app.innerHTML = data.html;
+                syncInfo.textContent = `Updated: ${data.timestamp}`;
+                localStorage.setItem('cached_timetable', JSON.stringify(data));
+            } catch (err) {
+                console.warn('Using cached data due to error:', err);
+                const cached = localStorage.getItem('cached_timetable');
+                if (cached) {
+                    const data = JSON.parse(cached);
+                    app.innerHTML = data.html;
+                    syncInfo.textContent = `Offline view (${data.timestamp})`;
+                } else {
+                    app.innerHTML = '<div style="padding:20px; color: red;">Error: Cannot connect to server and no offline data exists.</div>';
+                }
+            }
+        }
+
+        // Connection listeners
+        window.addEventListener('online', () => {
+            offlineStatus.innerHTML = '';
+            updateTimetable();
+        });
+        window.addEventListener('offline', () => {
+            offlineStatus.innerHTML = '<span class="offline-tag">OFFLINE</span>';
+        });
+        if (!navigator.onLine) offlineStatus.innerHTML = '<span class="offline-tag">OFFLINE</span>';
+
+        // Fast load from localStorage
+        const initialCached = localStorage.getItem('cached_timetable');
+        if (initialCached) {
+            const data = JSON.parse(initialCached);
+            app.innerHTML = data.html;
+            syncInfo.textContent = `Cached: ${data.timestamp}`;
+        }
+
+        // Fetch fresh data
+        updateTimetable();
+
+        // Register Service Worker for offline resilience
+        if ('serviceWorker' in navigator) {
+            const swCode = `
+                const CACHE_NAME = 'timetable-v2';
+                self.addEventListener('install', e => e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(['/', 'site.webmanifest']))));
+                self.addEventListener('fetch', e => e.respondWith(fetch(e.request).catch(() => caches.match(e.request))));
+            `;
+            const blob = new Blob([swCode], { type: 'application/javascript' });
+            navigator.serviceWorker.register(URL.createObjectURL(blob));
+        }
+
+        // Auto-refresh every 5 minutes
+        setInterval(updateTimetable, 5 * 60 * 1000);
+    </script>
+</body>
+
+</html>
