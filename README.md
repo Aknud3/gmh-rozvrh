@@ -1,11 +1,26 @@
 # GMH Rozvrh
 
-Webová aplikace pro zobrazení rozvrhu z veřejného HTML rozhraní Bakalářů. Skládá se ze dvou Cloudflare nasazení:
+Jednoduchý a rychlý rozvrh pro studenty a učitele. Aplikace převádí veřejná data z Bakalářů do přehledného webového rozhraní, kde si každý může vybrat třídu, učitele nebo skupinu a mít aktuální rozvrh pohodlně po ruce.
+
+Projekt je navržený tak, aby se rozvrh aktualizoval automaticky a aby šel snadno přizpůsobit i jiné škole, která používá veřejné rozhraní Bakalářů. Frontend běží na Cloudflare Pages, zatímco API, scraping a ukládání dat zajišťuje Cloudflare Worker s D1 databází.
+
+## Co projekt umí
+
+- zobrazuje aktuální i následující týden
+- automaticky objevuje dostupné třídy a učitele
+- podporuje onboarding podle permanentního rozvrhu
+- převádí HTML data do jednotného formátu pro frontend
+- ukládá načtená data do cache, takže je aplikace rychlá
+- umožňuje nasazení do vlastního Cloudflare účtu
+
+## Architektura
+
+Aplikace se skládá ze dvou Cloudflare nasazení:
 
 - API Worker: scraper, API endpointy, cron a D1 databáze
 - Cloudflare Pages: frontend v `public/`, který volá API Worker přes service binding
 
-Repozitář neobsahuje Cloudflare tokeny ani hesla. Každý uživatel si vytvoří vlastní Worker, Pages projekt a D1 databázi.
+Každý uživatel si vytvoří vlastní Worker, Pages projekt a D1 databázi.
 
 ## Rychlé nasazení do vlastního Cloudflare účtu
 
@@ -104,10 +119,6 @@ Pro lokální vývoj Workeru:
 ```bash
 npx wrangler dev --config=wrangler.api.toml
 ```
-
-## Bezpečnost
-
-Do Git repozitáře nikdy neukládej API tokeny, hesla ani soubory `.env`/`.dev.vars`. Tyto soubory jsou v `.gitignore`. Wrangler přihlašuj přes `npx wrangler login`; tokeny se do konfigurace projektu nepíšou.
 
 ## Licence
 
