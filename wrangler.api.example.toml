@@ -6,6 +6,7 @@ compatibility_date = "2026-03-13"
 [vars]
 TIMETABLE_BASE_URL = "https://YOUR-SCHOOL.example/Timetable/Public"
 DISCOVERY_URL = "https://YOUR-SCHOOL.example/Timetable/Public"
+# XML endpoint jídelníčku; pokud ho nepoužíváš, ponech výchozí hodnotu nebo uprav fetchMenu().
 STRAVA_MENU_URL = "https://www.strava.cz/strava5/Jidelnicky/XML?zarizeni=YOUR_ID"
 
 [[d1_databases]]

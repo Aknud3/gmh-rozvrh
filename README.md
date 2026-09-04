@@ -81,7 +81,7 @@ Pages funkce v `functions/api/[[path]].js` předávají `/api/*` požadavky do A
 
 ## Konfigurace zdroje
 
-`TIMETABLE_BASE_URL` je základní URL veřejného rozvrhu a `DISCOVERY_URL` je stránka, ze které se načítají třídy a učitelé. `STRAVA_MENU_URL` je volitelný XML endpoint jídelníčku.
+`TIMETABLE_BASE_URL` je základní URL veřejného rozvrhu a `DISCOVERY_URL` je stránka, ze které se načítají třídy a učitelé. `STRAVA_MENU_URL` určuje XML endpoint jídelníčku.
 
 Pokud jiný web používá jinou HTML strukturu, uprav parser v `src/scraper/index.js` a spusť:
 
