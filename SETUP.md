@@ -79,10 +79,32 @@ https://skola.example/Timetable/Public/Next/Class/{ID}
 
 ### Aktuální zdrojové stránky
 
-- [Přehled rozvrhů a discovery](https://znamky.gmh.cz/Timetable/Public)
+Scraper aktuálně volá tyto celé URL:
+
+```text
+# Discovery tříd a učitelů
+https://znamky.gmh.cz/Timetable/Public
+
+# Permanentní rozvrh – používá se pro onboarding a skupiny
+https://znamky.gmh.cz/Timetable/Public/Permanent/Class/PY?ShowCaption=0&ShowFilter=1&TouchMode=1&showTerm=1
+
+# Aktuální rozvrh
+https://znamky.gmh.cz/Timetable/Public/Actual/Class/PY?ShowCaption=0&ShowFilter=1&TouchMode=1&showTerm=1
+
+# Rozvrh na následující týden
+https://znamky.gmh.cz/Timetable/Public/Next/Class/PY?showCaption=0&showFilter=1&showTerm=1
+
+# Jídelníček Strava ve formátu XML
+https://www.strava.cz/strava5/Jidelnicky/XML?zarizeni=0059
+```
+
+Odkazy pro prohlédnutí:
+
+- [Discovery tříd a učitelů](https://znamky.gmh.cz/Timetable/Public)
 - [Permanentní rozvrh PY](https://znamky.gmh.cz/Timetable/Public/Permanent/Class/PY?ShowCaption=0&ShowFilter=1&TouchMode=1&showTerm=1)
 - [Aktuální rozvrh PY](https://znamky.gmh.cz/Timetable/Public/Actual/Class/PY?ShowCaption=0&ShowFilter=1&TouchMode=1&showTerm=1)
 - [Následující týden PY](https://znamky.gmh.cz/Timetable/Public/Next/Class/PY?showCaption=0&showFilter=1&showTerm=1)
+- [Strava XML jídelníček](https://www.strava.cz/strava5/Jidelnicky/XML?zarizeni=0059)
 
 `PY` je pouze ukázkové ID. Třídy a učitelé se načítají dynamicky.
 
