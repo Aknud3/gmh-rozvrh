@@ -1,6 +1,6 @@
 export async function fetchMenu(url) {
     try {
-        const xmlUrl = "https://www.strava.cz/strava5/Jidelnicky/XML?zarizeni=0059";
+        const xmlUrl = url || "https://www.strava.cz/strava5/Jidelnicky/XML?zarizeni=0059";
         console.log("Fetching from the XML Golden Grail...");
         const res = await fetch(xmlUrl, {
             headers: { "User-Agent": "Mozilla/5.0" }
@@ -91,7 +91,7 @@ async function scrapeUrl(url, cacheKey, env, lastData, lastHashes) {
 }
 
 export async function fetchTimetable(type, id, env) {
-    const baseUrl = "https://znamky.gmh.cz/Timetable/Public";
+    const baseUrl = env.TIMETABLE_BASE_URL || "https://znamky.gmh.cz/Timetable/Public";
     const typePath = type === "teacher" ? "Teacher" : "Class";
     const actualUrl = `${baseUrl}/Actual/${typePath}/${id}?ShowCaption=0&ShowFilter=1&TouchMode=1&showTerm=1`;
     const nextUrl = `${baseUrl}/Next/${typePath}/${id}?showCaption=0&showFilter=1&showTerm=1`;
@@ -158,7 +158,7 @@ export function decodeHtmlEntities(text) {
 
 export async function discoverEntities(env) {
     try {
-        const url = "https://znamky.gmh.cz/Timetable/Public";
+        const url = env.DISCOVERY_URL || "https://znamky.gmh.cz/Timetable/Public";
         const res = await fetch(url, { headers: { "User-Agent": "Mozilla/5.0" } });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const html = await res.text();

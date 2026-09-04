@@ -1,0 +1,17 @@
+# Copy to wrangler.api.toml and replace every YOUR_* value.
+name = "YOUR_API_WORKER_NAME"
+main = "src/index.js"
+compatibility_date = "2026-03-13"
+
+[vars]
+TIMETABLE_BASE_URL = "https://YOUR-SCHOOL.example/Timetable/Public"
+DISCOVERY_URL = "https://YOUR-SCHOOL.example/Timetable/Public"
+STRAVA_MENU_URL = "https://www.strava.cz/strava5/Jidelnicky/XML?zarizeni=YOUR_ID"
+
+[[d1_databases]]
+binding = "timetable_db"
+database_name = "YOUR_D1_DATABASE_NAME"
+database_id = "YOUR_D1_DATABASE_ID"
+
+[triggers]
+crons = ["*/2 * * * *"]

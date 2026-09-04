@@ -1,46 +1,33 @@
-# Cloudflare deployment
+# Deployment checklist
 
-Projekt má dvě oddělená Cloudflare nasazení:
+Kompletní návod pro nový Cloudflare účet je v [README.md](README.md).
 
-## 1. API Worker
+## API Worker
 
-Worker se jmenuje `rozvrh-api`. Obsahuje scraper, API endpointy, cron aktualizaci a přístup k D1 databázi.
+1. `cp wrangler.api.example.toml wrangler.api.toml`
+2. Vytvoř D1 databázi: `npx wrangler d1 create NAME`
+3. Doplň `database_name`, `database_id` a URL zdroje do `wrangler.api.toml`.
+4. Inicializuj tabulky:
 
-Konfigurace: `wrangler.api.toml`
+   ```bash
+   npx wrangler d1 execute NAME --remote --file=./schema.sql --config=wrangler.api.toml
+   ```
 
-Nasazení z této složky:
+5. Nasaď Worker:
 
-```bash
-npx wrangler deploy --config wrangler.api.toml
-```
+   ```bash
+   npx wrangler deploy --config=wrangler.api.toml
+   ```
 
-Cron běží každé dvě minuty. API endpoint aplikace je `/api/timetable`.
+## Pages
 
-Cache klíče rozvrhů používají prefix `tt_v3_`, aby se po změně parseru nepoužily staré výsledky s celými názvy místností.
+1. `cp wrangler.pages.example.toml wrangler.toml`
+2. Nastav Pages `name` a `service` na jméno API Workeru.
+3. Sestav a nasaď:
 
-## 2. Cloudflare Pages
+   ```bash
+   npm run build
+   npx wrangler pages deploy public --project-name NAME --branch=production
+   ```
 
-Pages projekt se jmenuje `rozvrh-gmh` a používá doménu `rozvrh.gmh.cz`.
-
-Pages obsluhuje frontend z `public/` a funkce v `functions/`. Soubor `functions/api/[[path]].js` předává `/api/*` požadavky do Workeru `rozvrh-api` přes service binding `WORKER_API`.
-
-Nasazení Pages:
-
-```bash
-npx wrangler pages deploy public --project-name rozvrh-gmh --branch production
-```
-
-Pages konfigurace je v `wrangler.toml`. API Worker musí být nasazený před Pages, aby service binding `WORKER_API` mířil na dostupný Worker.
-
-## Po nasazení
-
-Ověř:
-
-```bash
-curl -i https://rozvrh.gmh.cz/
-curl -i 'https://rozvrh.gmh.cz/api/timetable?type=class&id=PJ'
-```
-
-Zdrojové stránky rozvrhu jsou uvedené v `wrangler.api.toml`. Parser je v `src/scraper/index.js`.
-
-Aktuální seznam tříd se načítá dynamicky z discovery stránky Bakalářů; není potřeba ho ručně udržovat v kódu.
+Binding `WORKER_API` v Pages musí odkazovat na API Worker. Vlastní doménu se nastavuje u Pages projektu v Cloudflare Dashboardu.

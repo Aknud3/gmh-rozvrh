@@ -6,11 +6,13 @@ compatibility_date = "2026-03-13"
 mode = "smart"
 
 [vars]
+TIMETABLE_BASE_URL = "https://znamky.gmh.cz/Timetable/Public"
+DISCOVERY_URL = "https://znamky.gmh.cz/Timetable/Public"
 TIMETABLE_URL = "https://znamky.gmh.cz/timetable/public/Actual/class/PY?ShowCaption=0&ShowFilter=1&TouchMode=1&showTerm=1"
 NEXT_TIMETABLE_URL = "https://znamky.gmh.cz/Timetable/Public/Next/Class/PY?showCaption=0&showFilter=1&showTerm=1"
 CLASS_4A_URL = "https://znamky.gmh.cz/timetable/public/Actual/class/PZ?ShowCaption=0&ShowFilter=1&TouchMode=1&showTerm=1"
 CLASS_4A_NEXT_URL = "https://znamky.gmh.cz/Timetable/Public/Next/Class/PZ?showCaption=0&showFilter=1&showTerm=1"
-STRAVA_MENU_URL = "https://app.strava.cz/en/jidelnicky?jidelna=0059"
+STRAVA_MENU_URL = "https://www.strava.cz/strava5/Jidelnicky/XML?zarizeni=0059"
 
 [[d1_databases]]
 binding = "timetable_db"
