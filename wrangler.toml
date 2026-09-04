@@ -6,10 +6,10 @@ compatibility_date = "2026-03-19"
 mode = "smart"
 
 [vars]
-TIMETABLE_URL = "https://znamky.gmh.cz/timetable/public/Actual/class/PJ?ShowCaption=0&ShowFilter=1&TouchMode=1&showTerm=1"
-NEXT_TIMETABLE_URL = "https://znamky.gmh.cz/Timetable/Public/Next/Class/PJ?showCaption=0&showFilter=1&showTerm=1"
-CLASS_4A_URL = "https://znamky.gmh.cz/timetable/public/Actual/class/PR?ShowCaption=0&ShowFilter=1&TouchMode=1&showTerm=1"
-CLASS_4A_NEXT_URL = "https://znamky.gmh.cz/Timetable/Public/Next/Class/PR?showCaption=0&showFilter=1&showTerm=1"
+TIMETABLE_URL = "https://znamky.gmh.cz/timetable/public/Actual/class/PY?ShowCaption=0&ShowFilter=1&TouchMode=1&showTerm=1"
+NEXT_TIMETABLE_URL = "https://znamky.gmh.cz/Timetable/Public/Next/Class/PY?showCaption=0&showFilter=1&showTerm=1"
+CLASS_4A_URL = "https://znamky.gmh.cz/timetable/public/Actual/class/PZ?ShowCaption=0&ShowFilter=1&TouchMode=1&showTerm=1"
+CLASS_4A_NEXT_URL = "https://znamky.gmh.cz/Timetable/Public/Next/Class/PZ?showCaption=0&showFilter=1&showTerm=1"
 STRAVA_MENU_URL = "https://app.strava.cz/en/jidelnicky?jidelna=0059"
 
 [[services]]

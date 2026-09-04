@@ -248,7 +248,7 @@ export async function updateCache(env) {
         await Promise.all(batch.map(async (e) => {
             const res = await fetchTimetable(e.type, e.id, env);
             if (res.success) {
-                const cacheKey = `tt_${e.type}_${e.id.toUpperCase()}`;
+                const cacheKey = `tt_v2_${e.type}_${e.id.toUpperCase()}`;
                 
                 // Create a hash of the new data
                 const resStr = JSON.stringify(res);
@@ -265,7 +265,7 @@ export async function updateCache(env) {
                     writeCount++;
                 }
                 
-                if (e.type === "class" && ["PJ", "PR", "PL", "PM"].includes(e.id.toUpperCase())) {
+                if (e.type === "class") {
                     newData.classes[e.id.toLowerCase()] = res;
                 }
             }
@@ -284,28 +284,67 @@ export async function updateCache(env) {
 }
 
 export async function parseTimetable(fullHtml) {
-    const detailMatches = Array.from(fullHtml.matchAll(/data-detail='({[^']*}?)'/g));
     const items = [];
-    for (const match of detailMatches) {
+    const seen = new Set();
+    const dayNames = {
+        "pondělí": "po", "úterý": "út", "středa": "st",
+        "čtvrtek": "čt", "pátek": "pá"
+    };
+
+    const normalizeDay = (day) => {
+        const match = String(day || "").match(/^(\d{1,2})\.(\d{1,2})\.\d{4} \(([^)]+)\)/);
+        if (!match) return "";
+        const [, d, m, fullName] = match;
+        const shortName = dayNames[fullName.toLowerCase()] || fullName.slice(0, 2);
+        return `${shortName} ${parseInt(d)}.${parseInt(m)}.`;
+    };
+
+    const addDetail = (detail) => {
+        if (detail?.type !== "atom" || !detail.subjecttext) return;
+
+        const subjectText = String(detail.subjecttext).trim();
+        const oldParts = subjectText.split("|").map((part) => part.trim());
+        const isOldFormat = oldParts.length >= 3;
+        const timeText = String(detail.time || (isOldFormat ? oldParts[2] : ""));
+        const hourMatch = timeText.match(/^(\d+)/) || timeText.match(/(\d+)/);
+        const date = normalizeDay(detail.day) || (isOldFormat ? oldParts[1] : "");
+        const item = {
+            subject: isOldFormat ? oldParts[0] : subjectText,
+            date,
+            hour: hourMatch ? parseInt(hourMatch[1]) : 0,
+            time: timeText.match(/\(([^)]+)\)/)?.[1] || "",
+            teacher: detail.teacher || "-",
+            room: detail.room || "-",
+            group: detail.group || "-",
+            theme: detail.theme || "",
+            change: detail.changeinfo || ""
+        };
+
+        if (!item.date) return;
+        const identity = detail.IdentCode || `${item.date}|${item.hour}|${item.subject}|${item.teacher}|${item.room}|${item.group}`;
+        if (seen.has(identity)) return;
+        seen.add(identity);
+        items.push(item);
+    };
+
+    // New Bakaláři HTML: TooltipDetails is a JSON object encoded as a JSON string.
+    for (const match of fullHtml.matchAll(/"TooltipDetails":"((?:\\.|[^"\\])*)"/g)) {
         try {
-            const decodedJson = decodeHtmlEntities(match[1]);
-            const detail = JSON.parse(decodedJson);
-            if (detail.type === "atom" && detail.subjecttext) {
-                const parts = detail.subjecttext.split("|").map((s) => s.trim());
-                const hourMatch = (parts[2] || "").match(/(\d+)/);
-                items.push({
-                    subject: parts[0] || "Unknown",
-                    date: parts[1] || "",
-                    hour: hourMatch ? parseInt(hourMatch[1]) : 0,
-                    time: (parts[2] || "").match(/\((.*)\)/)?.[1] || "",
-                    teacher: detail.teacher || "-",
-                    room: detail.room || "-",
-                    group: detail.group || "-",
-                    theme: detail.theme || "",
-                    change: detail.changeinfo || ""
-                });
-            }
+            const tooltipJson = JSON.parse(`"${match[1]}"`);
+            addDetail(JSON.parse(decodeHtmlEntities(tooltipJson)));
         } catch (e) {
+            // Ignore null/invalid tooltip values and continue with other lessons.
+        }
+    }
+
+    // Backward compatibility with the old rendered data-detail attribute.
+    if (items.length === 0) {
+        for (const match of fullHtml.matchAll(/data-detail='({[^']*}?)'/g)) {
+            try {
+                addDetail(JSON.parse(decodeHtmlEntities(match[1])));
+            } catch (e) {
+                // Ignore malformed legacy entries.
+            }
         }
     }
     return items;

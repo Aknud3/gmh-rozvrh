@@ -16,6 +16,8 @@ npx wrangler deploy --config wrangler.api.toml
 
 Cron běží každé dvě minuty. API endpoint aplikace je `/api/timetable`.
 
+Cache klíče rozvrhů používají prefix `tt_v2_`, aby se po změně parseru nepoužily staré prázdné výsledky.
+
 ## 2. Cloudflare Pages
 
 Pages projekt se jmenuje `rozvrh-gmh` a používá doménu `rozvrh.gmh.cz`.
@@ -41,3 +43,4 @@ curl -i 'https://rozvrh.gmh.cz/api/timetable?type=class&id=PJ'
 
 Zdrojové stránky rozvrhu jsou uvedené v `wrangler.api.toml`. Parser je v `src/scraper/index.js`.
 
+Aktuální seznam tříd se načítá dynamicky z discovery stránky Bakalářů; není potřeba ho ručně udržovat v kódu.

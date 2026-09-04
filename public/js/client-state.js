@@ -6,7 +6,7 @@ export const CLIENT_STATE = `
         
         // Entity selection
         let selectedType = localStorage.getItem('selectedType') || 'class'; // 'class' or 'teacher'
-        let selectedId = localStorage.getItem('selectedId') || localStorage.getItem('selectedClass') || 'pj';
+        let selectedId = localStorage.getItem('selectedId') || localStorage.getItem('selectedClass') || 'PY';
         
         // Backward compatibility
         let selectedClass = selectedId; 

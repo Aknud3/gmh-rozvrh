@@ -1,7 +1,10 @@
-import { HTML_SHELL } from '../public/index.template.js';
+import { FULL_CLIENT_JS, getFullHtml } from '../public/index.template.js';
 import { SW_CODE } from '../public/js/sw-code.js';
 import { handleTimetable } from './api/timetable.js';
 import { updateCache } from './scraper/index.js';
+
+// The API Worker only needs this fallback shell for direct root requests.
+const HTML_SHELL = getFullHtml(FULL_CLIENT_JS);
 
 export default {
     /**
