@@ -48,8 +48,8 @@ export async function handleTimetable(request, env, ctx) {
         return createCachedResponse(JSON.stringify(mainCache), request, cache, cacheKey, ctx);
     }
 
-    // v2 ignores old D1 rows containing empty results from the broken parser.
-    const dbKey = `tt_v2_${type}_${id}`;
+    // v3 also refreshes rows created before room names were normalized.
+    const dbKey = `tt_v3_${type}_${id}`;
     let data = null;
     try {
         const row = await env.timetable_db.prepare("SELECT value FROM timetable_cache WHERE key = ?").bind(dbKey).first();

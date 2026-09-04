@@ -16,7 +16,7 @@ npx wrangler deploy --config wrangler.api.toml
 
 Cron běží každé dvě minuty. API endpoint aplikace je `/api/timetable`.
 
-Cache klíče rozvrhů používají prefix `tt_v2_`, aby se po změně parseru nepoužily staré prázdné výsledky.
+Cache klíče rozvrhů používají prefix `tt_v3_`, aby se po změně parseru nepoužily staré výsledky s celými názvy místností.
 
 ## 2. Cloudflare Pages
 

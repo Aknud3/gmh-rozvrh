@@ -248,7 +248,7 @@ export async function updateCache(env) {
         await Promise.all(batch.map(async (e) => {
             const res = await fetchTimetable(e.type, e.id, env);
             if (res.success) {
-                const cacheKey = `tt_v2_${e.type}_${e.id.toUpperCase()}`;
+                const cacheKey = `tt_v3_${e.type}_${e.id.toUpperCase()}`;
                 
                 // Create a hash of the new data
                 const resStr = JSON.stringify(res);
@@ -299,6 +299,12 @@ export async function parseTimetable(fullHtml) {
         return `${shortName} ${parseInt(d)}.${parseInt(m)}.`;
     };
 
+    const normalizeRoom = (room) => {
+        const value = String(room || "").trim();
+        if (!value) return "-";
+        return value.match(/\b(\d{3})\b/)?.[1] || value;
+    };
+
     const addDetail = (detail) => {
         if (detail?.type !== "atom" || !detail.subjecttext) return;
 
@@ -314,7 +320,7 @@ export async function parseTimetable(fullHtml) {
             hour: hourMatch ? parseInt(hourMatch[1]) : 0,
             time: timeText.match(/\(([^)]+)\)/)?.[1] || "",
             teacher: detail.teacher || "-",
-            room: detail.room || "-",
+            room: normalizeRoom(detail.room),
             group: detail.group || "-",
             theme: detail.theme || "",
             change: detail.changeinfo || ""

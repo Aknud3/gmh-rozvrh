@@ -18,6 +18,11 @@ const dayMap = {
 function parseTooltipDetails(html) {
     const matches = html.matchAll(/"TooltipDetails":"((?:\\.|[^"\\])*)"/g);
     const items = [];
+    const normalizeRoom = (room) => {
+        const value = String(room || "").trim();
+        if (!value) return "-";
+        return value.match(/\b(\d{3})\b/)?.[1] || value;
+    };
 
     for (const match of matches) {
         try {
@@ -40,7 +45,7 @@ function parseTooltipDetails(html) {
                 hour: parseInt(hourMatch[1]),
                 time: timeMatch?.[1] || "",
                 teacher: detail.teacher || "-",
-                room: detail.room || "-",
+                room: normalizeRoom(detail.room),
                 group: detail.group || "-",
                 theme: detail.theme || "",
                 change: detail.changeinfo || ""
