@@ -1,6 +1,10 @@
 # GMH Rozvrh
 
+![Ikona GMH Rozvrhu](public/assets/favicon.svg)
+
 Jednoduchý a rychlý rozvrh pro studenty a učitele. Aplikace převádí veřejná data z Bakalářů do přehledného webového rozhraní, kde si každý může vybrat třídu, učitele nebo skupinu a mít aktuální rozvrh pohodlně po ruce.
+
+Projekt vyvinul **Eduard Wojnar** pro **Gymnázium Mnichovo Hradiště**.
 
 Projekt je navržený tak, aby se rozvrh aktualizoval automaticky a aby šel snadno přizpůsobit i jiné škole, která používá veřejné rozhraní Bakalářů. Frontend běží na Cloudflare Pages, zatímco API, scraping a ukládání dat zajišťuje Cloudflare Worker s D1 databází.
 
@@ -97,6 +101,17 @@ Pages funkce v `functions/api/[[path]].js` předávají `/api/*` požadavky do A
 ## Konfigurace zdroje
 
 `TIMETABLE_BASE_URL` je základní URL veřejného rozvrhu a `DISCOVERY_URL` je stránka, ze které se načítají třídy a učitelé. `STRAVA_MENU_URL` určuje XML endpoint jídelníčku.
+
+## Scrapované stránky
+
+Scraper načítá veřejné stránky rozvrhu Gymnázia Mnichovo Hradiště:
+
+- [Přehled rozvrhů a discovery tříd/učitelů](https://znamky.gmh.cz/Timetable/Public)
+- [Permanentní rozvrh třídy PY](https://znamky.gmh.cz/Timetable/Public/Permanent/Class/PY?ShowCaption=0&ShowFilter=1&TouchMode=1&showTerm=1) – používá se při onboardingu
+- [Aktuální rozvrh třídy PY](https://znamky.gmh.cz/Timetable/Public/Actual/Class/PY?ShowCaption=0&ShowFilter=1&TouchMode=1&showTerm=1)
+- [Rozvrh na následující týden třídy PY](https://znamky.gmh.cz/Timetable/Public/Next/Class/PY?showCaption=0&showFilter=1&showTerm=1)
+
+`PY` je pouze ukázkové ID třídy. Parser dynamicky načítá dostupné třídy a učitele z discovery stránky.
 
 Pokud jiný web používá jinou HTML strukturu, uprav parser v `src/scraper/index.js` a spusť:
 
