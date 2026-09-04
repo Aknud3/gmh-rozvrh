@@ -1,6 +1,6 @@
 # Deployment checklist
 
-Kompletní návod pro nový Cloudflare účet je v [README.md](README.md).
+Kompletní návod pro nový Cloudflare účet je v [SETUP.md](SETUP.md).
 
 ## API Worker
 
